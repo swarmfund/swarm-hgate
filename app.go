@@ -6,9 +6,6 @@ import (
 	"net/http"
 	"net/http/httputil"
 
-	"github.com/multiplay/go-slack/chat"
-	"github.com/multiplay/go-slack/lrhook"
-	"github.com/sirupsen/logrus"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/swarmfund/go/signcontrol"
 	"gitlab.com/swarmfund/hgate/config"
@@ -30,7 +27,8 @@ func NewApp(configPath string) (app *App, err error) {
 		return nil, fmt.Errorf("can not initialize config: %s", err.Error())
 	}
 
-	initLog(app)
+	app.Log = logan.New().Level(app.Conf.LL).
+		WithField("application", "HGate")
 
 	app.Sub, err = tx.NewSubmitter(app.Conf.HorizonUrl, app.Conf.KP)
 	if err != nil {
@@ -66,22 +64,4 @@ func (app *App) RedirectHandler(w http.ResponseWriter, r *http.Request) {
 	proxy := httputil.NewSingleHostReverseProxy(app.Conf.HUrl)
 	proxy.ServeHTTP(w, r)
 	lEntry.WithField("path", r.URL.Path).Info("Finished request")
-}
-
-func initLog(app *App) {
-	app.Log = logan.
-		New().Level(app.Conf.LL).
-		WithField("application", "HGate")
-
-	cfg := lrhook.Config{
-		MinLevel: logrus.WarnLevel,
-		Message: chat.Message{
-			Username:  "HGate Proxy",
-			Channel:   "swarm_notices",
-			IconEmoji: ":glitch_crab:",
-		},
-	}
-	h := lrhook.New(cfg, "https://hooks.slack.com/services/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")
-
-	app.Log.AddLogrusHook(h)
 }
