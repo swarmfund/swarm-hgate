@@ -14,12 +14,14 @@ import (
 // Submitter is
 type Submitter struct {
 	connector  *horizon.Connector
+	AccountID  string
 	KP         *keypair.Full
 	HorizonUrl string
 }
 
-func NewSubmitter(horizonUrl string, kp *keypair.Full) (s *Submitter, err error) {
+func NewSubmitter(horizonUrl string, accountID string, kp *keypair.Full) (s *Submitter, err error) {
 	s = &Submitter{
+		AccountID:  accountID,
 		KP:         kp,
 		HorizonUrl: horizonUrl,
 	}

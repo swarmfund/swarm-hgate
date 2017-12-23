@@ -1,24 +1,25 @@
 package config
 
 import (
-	"errors"
 	"io/ioutil"
 	"net/url"
 
 	"gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/swarmfund/go/keypair"
 	"gopkg.in/yaml.v2"
 )
 
 type GateConfig struct {
-	Port       string `yaml:"port"`
-	HorizonUrl string `yaml:"horizon_url"`
-	Seed       string `yaml:"seed"`
-	LogLevel   string `yaml:"log_level"`
+	Port          string `yaml:"port"`
+	RawHorizonURL string `yaml:"horizon_url"`
+	Seed          string `yaml:"seed"`
+	AccountID     string `yaml:"account_id"`
+	LogLevelS     string `yaml:"log_level"`
 
-	HUrl *url.URL
-	KP   *keypair.Full
-	LL   logan.Level
+	HorizonURL *url.URL
+	KP         *keypair.Full
+	LogLevel   logan.Level
 }
 
 func InitConfig(filePath string) (*GateConfig, error) {
@@ -33,7 +34,7 @@ func InitConfig(filePath string) (*GateConfig, error) {
 		return nil, err
 	}
 
-	config.HUrl, err = url.Parse(config.HorizonUrl)
+	config.HorizonURL, err = url.Parse(config.RawHorizonURL)
 	if err != nil {
 		return nil, err
 	}
@@ -43,20 +44,28 @@ func InitConfig(filePath string) (*GateConfig, error) {
 		return nil, err
 	}
 
-	config.LL = logLevel(config.LogLevel)
+	config.LogLevel = logLevel(config.LogLevelS)
 	return config, nil
 }
 
 func (gc *GateConfig) parseKP() error {
 	kp, err := keypair.Parse(gc.Seed)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to parse seed")
 	}
 
 	var ok bool
 	gc.KP, ok = kp.(*keypair.Full)
 	if !ok {
 		return errors.New("must be a seed")
+	}
+
+	if gc.AccountID == "" {
+		gc.AccountID = gc.KP.Address()
+	}
+	_, err = keypair.Parse(gc.AccountID)
+	if err != nil {
+		return errors.Wrap(err, "failed to parse accountID")
 	}
 	return nil
 }

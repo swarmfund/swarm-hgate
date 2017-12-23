@@ -20,7 +20,7 @@ type PaymentAction struct {
 	paymentOp     *xdr.PaymentOp
 }
 
-func InitPaymentHandler(app *App) func(r *http.Request) server.HandlerI {
+func initPaymentHandler(app *App) func(r *http.Request) server.HandlerI {
 	return func(r *http.Request) server.HandlerI {
 		app.Log.WithField("path", r.URL.Path).Info("Started request")
 		return &PaymentAction{
@@ -32,7 +32,7 @@ func InitPaymentHandler(app *App) func(r *http.Request) server.HandlerI {
 			},
 
 			sub:           app.Sub,
-			sourceAccount: app.Conf.KP.Address(),
+			sourceAccount: app.Conf.AccountID,
 		}
 	}
 }
@@ -58,20 +58,20 @@ func (action *PaymentAction) LoadRequest() {
 		return
 	}
 
-	ok := IsValidAccountId(action.requestData.DestinationID)
+	ok := isValidAccountId(action.requestData.DestinationID)
 	if !ok {
 		action.SetInvalidField("destination_id", errors.New("must be valid accountId"))
 		return
 	}
 
 	action.paymentOp = new(xdr.PaymentOp)
-	action.paymentOp.Subject, err = ToXDRString256(action.requestData.Subject)
+	action.paymentOp.Subject, err = toXDRString256(action.requestData.Subject)
 	if err != nil {
 		action.SetInvalidField("subject", err)
 		return
 	}
 
-	action.paymentOp.Reference, err = ToXDRString64(action.requestData.Reference)
+	action.paymentOp.Reference, err = toXDRString64(action.requestData.Reference)
 	if err != nil {
 		action.SetInvalidField("reference", err)
 		return

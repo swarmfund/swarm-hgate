@@ -17,7 +17,7 @@ type PaymentRequest struct {
 
 func (sub *Submitter) CreatePaymentTx(paymentOp *xdr.PaymentOp) (*horizon.TransactionSuccess, error) {
 	var accountID xdr.AccountId
-	err := accountID.SetAddress(sub.KP.Address())
+	err := accountID.SetAddress(sub.AccountID)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to set address")
 	}

@@ -1,4 +1,5 @@
 port: 8842 # port to where will listen
 horizon_url: https://staging.api.sun.swarm.fund # url of Horizon API
-seed: SCT... #your SecretSeed
-log_level: info # level of log output
+seed: SCR4... # your SecretSeed
+account_id: GDE2...
+log_level: info
