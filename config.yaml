@@ -1,0 +1,4 @@
+port: 8842 # port to where will listen
+log_level: info # level of log output
+horizon_url: http://18.195.18.3:8000 # url of Horizon API
+seed: SCTHAZVZCSOFLN4JT7ISCVBOGPNNFOPVUVMQAUQLUGYTWNJDIM2ZEDJT #your SecretSeed
