@@ -1,4 +1,4 @@
-package hgate
+package main
 
 import (
 	"fmt"
@@ -6,6 +6,9 @@ import (
 	"net/http"
 	"net/http/httputil"
 
+	"github.com/multiplay/go-slack/chat"
+	"github.com/multiplay/go-slack/lrhook"
+	"github.com/sirupsen/logrus"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/swarmfund/go/signcontrol"
 	"gitlab.com/swarmfund/hgate/config"
@@ -70,14 +73,15 @@ func initLog(app *App) {
 		New().Level(app.Conf.LL).
 		WithField("application", "HGate")
 
-	//cfg := lrhook.Config{
-	//	MinLevel: logrus.WarnLevel,
-	//	Message: chat.Message{
-	//		Channel:   "proxy_reports",
-	//		IconEmoji: ":glitch_crab:",
-	//	},
-	//}
-	//h := lrhook.New(cfg, "https://hooks.slack.com/services/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")
+	cfg := lrhook.Config{
+		MinLevel: logrus.WarnLevel,
+		Message: chat.Message{
+			Username:  "HGate Proxy",
+			Channel:   "swarm_notices",
+			IconEmoji: ":glitch_crab:",
+		},
+	}
+	h := lrhook.New(cfg, "https://hooks.slack.com/services/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")
 
-	//app.Log.AddLogrusHook(h)
+	app.Log.AddLogrusHook(h)
 }

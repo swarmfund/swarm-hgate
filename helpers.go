@@ -1,4 +1,4 @@
-package hgate
+package main
 
 import (
 	"gitlab.com/swarmfund/go/keypair"

@@ -1,6 +1,17 @@
 # HGate
 
-This is a proxy for interaction with the Horizon server, which performs the signature of the request headers for authentication and also the formation of some transactions (currently only Payment).
+This is a simple proxy for interacting with the Horizon server, which performs the signature of the request headers for authentication and also the formation of some transactions (currently only Payment).
+
+
+
+## Build sources 
+
+> Before start you need to [install Go](https://golang.org/doc/install).
+
+To get HGate executable just run: 
+```bash
+go install gitlab.com/swarmfung/hgate 
+```
 
 ## Usage
 

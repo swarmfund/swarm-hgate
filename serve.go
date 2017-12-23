@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/urfave/cli"
-	"gitlab.com/swarmfund/hgate"
 )
 
 const DefaultConfigPath = "./config.yaml"
@@ -22,7 +21,7 @@ var ServeCommand = cli.Command{
 }
 
 func serveAction(c *cli.Context) error {
-	app, err := hgate.NewApp(c.String("config"))
+	app, err := NewApp(c.String("config"))
 	if err != nil {
 		return toCliError(fmt.Errorf("HGate initialization failed: %s", err.Error()))
 	}
